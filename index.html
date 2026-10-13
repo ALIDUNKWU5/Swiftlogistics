@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftLogistics | Global Courier & Supply Chain Solutions</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        secondary: 'var(--color-secondary)',
+                        accent: 'var(--color-accent)',
+                        accentHover: 'var(--color-accent-hover)',
+                        cardBg: 'var(--color-card)',
+                        cardBorder: 'var(--color-border)',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet.js CSS for Interactive Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root {
+            --color-bg: #F8FAFC;
+            --color-text: #0F172A;
+            --color-primary: #0A192F;
+            --color-secondary: #1E293B;
+            --color-accent: #FF6B00;
+            --color-accent-hover: #E05D00;
+            --color-card: #FFFFFF;
+            --color-border: #E2E8F0;
+        }
+
+        .dark {
+            --color-bg: #030712;
+            --color-text: #F8FAFC;
+            --color-primary: #0B0F19;
+            --color-secondary: #111827;
+            --color-accent: #FF6B00;
+            --color-accent-hover: #FF8533;
+            --color-card: #111827;
+            --color-border: #1F2937;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .glass-panel {
+            background: rgba(3, 7, 18, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Parallax BG class */
+        .parallax-bg {
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        @media (max-width: 1023px) {
+            .parallax-bg {
+                background-attachment: scroll;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .parallax-bg {
+                background-attachment: scroll;
+            }
+        }
+
+        /* Infinite horizontal slider ticker */
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-ticker {
+            display: flex;
+            width: 200%;
+            animation: ticker 25s linear infinite;
+        }
+        .animate-ticker:hover {
+            animation-play-state: paused;
+        }
+
+        /* Animated grid background */
+        .hero-grid-pattern {
+            background-image: radial-gradient(rgba(255, 107, 0, 0.2) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94A3B8;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        #leaflet-hub-map {
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Sticky Navigation Header -->
+    <header class="sticky top-0 z-50 bg-primary/95 dark:bg-black/90 backdrop-blur-md border-b border-slate-800 text-white shadow-xl transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo -->
+<a href="index.html" class="flex items-center">
+    <img
+        src="images/swiftlogistics-logo.png"
+        alt="SwiftLogistics — Global Freight & Courier"
+        class="h-12 w-auto object-contain"
+    >
+</a>
+
+
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-5 font-semibold text-sm">
+                    <a href="index.html" class="px-3 py-2 rounded-xl text-accent transition">Home</a>
+                    <a href="about.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">About Us</a>
+                    <a href="services.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">Services</a>
+                    <a href="tracking.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">Track</a>
+                    <a href="quote.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">Rate Calculator</a>
+                    <a href="contact.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">Contact</a>
+                </nav>
+
+                <!-- Right Action Bar & Theme Toggle -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-800/80 text-amber-400 hover:bg-slate-700 transition" title="Toggle Light/Dark Theme">
+                        <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+                    </button>
+                    <a href="tel:+18005550199" class="flex items-center space-x-2 text-slate-300 hover:text-accent text-sm font-semibold transition">
+                        <i class="fa-solid fa-headset text-accent text-lg"></i>
+                        <span>+1 (800) 555-0199</span>
+                    </a>
+                    <a href="tracking.html" class="bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-accent/25 transition transform hover:-translate-y-0.5 text-sm">
+                        Track Package
+                    </a>
+                </div>
+
+                <!-- Mobile Menu & Theme Controls -->
+                <div class="md:hidden flex items-center space-x-2">
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-800 text-amber-400 hover:bg-slate-700">
+                        <i id="theme-icon-mobile" class="fa-solid fa-moon"></i>
+                    </button>
+                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-primary/98 dark:bg-black/98 border-b border-slate-800 px-4 pt-2 pb-6 space-y-2 backdrop-blur-lg">
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-xl text-white font-semibold hover:bg-slate-800">Home</a>
+            <a href="about.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">About Us</a>
+            <a href="services.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">Services</a>
+            <a href="tracking.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">Track Shipment</a>
+            <a href="quote.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">Rate Calculator</a>
+            <a href="contact.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">Contact Us</a>
+            <div class="pt-2">
+                <a href="tracking.html" class="block w-full bg-accent text-white py-3 rounded-xl font-bold shadow-md text-center">Track Package</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+
+        <!-- SECTION 1: Dynamic Split Hero Section -->
+        <section class="relative bg-gradient-to-br from-[#060D1A] via-primary to-[#0E1F38] text-white py-16 lg:py-24 overflow-hidden">
+            <div class="absolute inset-0 opacity-20 hero-grid-pattern"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Hero Left Content -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center space-x-2.5 bg-accent/15 border border-accent/40 px-4 py-1.5 rounded-full text-accent font-bold text-xs tracking-wider uppercase backdrop-blur-md">
+                            <span class="flex h-2 w-2 rounded-full bg-accent animate-ping"></span>
+                            <span>Next-Gen Smart Logistics Network</span>
+                        </div>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                            Global Courier & <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent via-orange-400 to-amber-300">Supply Chain</span> Precision
+                        </h1>
+                        <p class="text-base sm:text-lg text-slate-300 max-w-xl leading-relaxed">
+                            Accelerate your business with automated express delivery, real-time GPS fleet tracking, and instant cargo rate estimations spanning over 150+ countries.
+                        </p>
+
+                        <!-- Hero Interactive Dual Action Widget Tab Bar -->
+                        <div class="glass-panel p-2 sm:p-3 rounded-3xl shadow-2xl max-w-2xl border border-slate-700/60">
+                            <div class="flex space-x-2 border-b border-slate-700/50 pb-2 mb-3">
+                                <button onclick="switchHeroTab('track')" id="hero-tab-track" class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold bg-accent text-white shadow transition flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <span>Quick Track</span>
+                                </button>
+                                <button onclick="switchHeroTab('estimate')" id="hero-tab-estimate" class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-calculator"></i>
+                                    <span>Instant Rate Estimator</span>
+                                </button>
+                            </div>
+
+                            <!-- Tab 1: Quick Track Input -->
+                            <div id="hero-panel-track" class="p-1 space-y-3">
+                                <div class="flex flex-col sm:flex-row items-center gap-2">
+                                    <div class="relative w-full flex-grow">
+                                        <i class="fa-solid fa-barcode absolute left-4 top-3.5 text-slate-400"></i>
+                                        <input type="text" id="hero-tracking-input" placeholder="Enter Waybill No. (e.g. TRK123456)" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-900/90 border border-slate-700 text-white placeholder-slate-400 text-sm font-semibold focus:outline-none focus:border-accent">
+                                    </div>
+                                    <button onclick="quickTrack()" class="w-full sm:w-auto bg-accent hover:bg-accentHover text-white px-7 py-3 rounded-2xl font-bold text-sm tracking-wide shadow-lg shadow-accent/30 transition whitespace-nowrap">
+                                        Track Shipment
+                                    </button>
+                                </div>
+                                <div class="text-xs text-slate-400 flex items-center justify-between px-1">
+                                    <span>Sample: <strong class="text-accent cursor-pointer underline font-mono" onclick="document.getElementById('hero-tracking-input').value='TRK123456';">TRK123456</strong></span>
+                                    <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-halved mr-1"></i> SSL Encrypted</span>
+                                </div>
+                            </div>
+
+                            <!-- Tab 2: Quick Hero Rate Estimator -->
+                            <div id="hero-panel-estimate" class="hidden p-1 space-y-3">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <input type="text" id="hero-calc-origin" placeholder="Origin City/Zip" class="px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-xs font-semibold focus:outline-none focus:border-accent">
+                                    <input type="text" id="hero-calc-dest" placeholder="Destination City" class="px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-xs font-semibold focus:outline-none focus:border-accent">
+                                    <input type="number" id="hero-calc-weight" placeholder="Weight (kg)" class="px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-xs font-semibold focus:outline-none focus:border-accent">
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-900/70 p-3 rounded-2xl border border-slate-800">
+                                    <div>
+                                        <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">Estimated Standard Rate</span>
+                                        <span id="hero-calc-result" class="text-lg font-black text-accent">$0.00</span>
+                                    </div>
+                                    <button onclick="calculateHeroEstimate()" class="bg-slate-800 hover:bg-accent text-white px-5 py-2 rounded-xl text-xs font-bold transition">
+                                        Calculate Rate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating Statistics Counter Badges -->
+                        <div class="grid grid-cols-3 gap-4 pt-2">
+                            <div class="bg-slate-900/60 border border-slate-800/80 p-3 rounded-2xl text-center">
+                                <div class="text-xl sm:text-2xl font-black text-accent">99.8%</div>
+                                <div class="text-[11px] text-slate-400 font-semibold">On-Time Delivery</div>
+                            </div>
+                            <div class="bg-slate-900/60 border border-slate-800/80 p-3 rounded-2xl text-center">
+                                <div class="text-xl sm:text-2xl font-black text-white">150+</div>
+                                <div class="text-[11px] text-slate-400 font-semibold">Countries Served</div>
+                            </div>
+                            <div class="bg-slate-900/60 border border-slate-800/80 p-3 rounded-2xl text-center">
+                                <div class="text-xl sm:text-2xl font-black text-emerald-400">2.4M+</div>
+                                <div class="text-[11px] text-slate-400 font-semibold">Parcels/Year</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hero Right Graphic Preview -->
+                    <div class="lg:col-span-5 relative">
+                        <div class="relative mx-auto max-w-md lg:max-w-none">
+                            <div class="bg-gradient-to-tr from-accent to-amber-500 rounded-3xl p-1 shadow-2xl shadow-accent/20">
+                                <div class="bg-slate-950 rounded-[22px] overflow-hidden p-6 text-center space-y-4">
+                                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                                            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                        </div>
+                                        <span class="text-xs font-mono text-slate-400"><i class="fa-solid fa-satellite text-accent"></i> Live Logistics Stream</span>
+                                    </div>
+
+                                    <div class="relative h-56 rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center group">
+                                        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80" alt="Global Operations Hub" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-700" loading="lazy" width="800" height="400" onerror="this.remove()">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                                        <div class="relative z-10 p-4 text-center">
+                                            <div class="w-12 h-12 rounded-2xl bg-accent/90 text-white mx-auto flex items-center justify-center text-xl shadow-lg mb-2">
+                                                <i class="fa-solid fa-plane-departure"></i>
+                                            </div>
+                                            <h4 class="font-black text-white text-base">Express Cargo Network</h4>
+                                            <p class="text-xs text-slate-300">Active Cargo Routes Online</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 flex items-center justify-between text-left">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                                                <i class="fa-solid fa-truck-fast"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs font-bold text-white">Active Dispatch #8841</div>
+                                                <div class="text-[10px] text-slate-400">JFK &rarr; LHR Freight Terminal</div>
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-bold">On Schedule</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Corporate Partner Ticker Section -->
+        <section class="bg-slate-900 border-y border-slate-800/80 py-5 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 mb-2 text-center">
+                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Trusted Global Carrier Partners & Alliances</span>
+            </div>
+            <div class="flex overflow-hidden relative">
+                <div class="animate-ticker flex items-center space-x-12 text-slate-400 font-bold text-sm tracking-widest uppercase">
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-plane text-accent"></i> <span>AERO-EXPRESS GLOBAL</span></span>
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-ship text-accent"></i> <span>OCEAN-TRANS ATLANTIC</span></span>
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-truck-front text-accent"></i> <span>NEXUS LOGISTICS USA</span></span>
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-warehouse text-accent"></i> <span>EU SMART-HUB STORAGE</span></span>
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-boxes-packing text-accent"></i> <span>PACIFIC FREIGHT DIRECT</span></span>
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-plane text-accent"></i> <span>AERO-EXPRESS GLOBAL</span></span>
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-ship text-accent"></i> <span>OCEAN-TRANS ATLANTIC</span></span>
+                    <span class="flex items-center space-x-2"><i class="fa-solid fa-truck-front text-accent"></i> <span>NEXUS LOGISTICS USA</span></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TECHNOLOGY CONTROL ROOM SECTION -->
+        <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 relative">
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-cardBorder bg-[#0A192F] min-h-[420px] flex items-center justify-center">
+                        <img src="images/tech-control-room.jpg" alt="SwiftLogistics Technology Control Room" class="absolute inset-0 w-full h-full object-cover opacity-80" loading="lazy" width="800" height="600" onerror="tryImageFallback(this)">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-[#0A192F]/90 via-[#0A192F]/40 to-transparent"></div>
+                        
+                        <div class="absolute bottom-6 left-6 glass-panel p-4 rounded-2xl shadow-xl flex items-center space-x-3 max-w-xs border border-white/10">
+                            <div class="w-10 h-10 rounded-xl bg-accent text-white flex items-center justify-center font-bold shadow-md">
+                                <i class="fa-solid fa-satellite-dish"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-white">Live GPS Fleet</div>
+                                <div class="text-xs text-slate-300">1,250 vehicles online</div>
+                            </div>
+                        </div>
+
+                        <div class="absolute top-6 right-6 glass-panel p-4 rounded-2xl shadow-xl flex items-center space-x-3 max-w-xs border border-white/10">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold shadow-md">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-white">Route Optimization</div>
+                                <div class="text-xs text-emerald-400 font-semibold">18% faster average transit</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 space-y-6">
+                    <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3.5 py-1 rounded-full border border-accent/20 inline-block">Intelligent Infrastructure</span>
+                    <h2 class="text-3xl lg:text-4xl font-black tracking-tight">Powered by Advanced Telemetry & Automation</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-base leading-relaxed">
+                        Our proprietary logistics operating system orchestrates millions of data points every second, ensuring your cargo takes the most secure, efficient, and cost-effective path from origin to destination.
+                    </p>
+
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></div>
+                            <div>
+                                <h4 class="text-sm font-bold">Scan-by-Scan Telemetry Tracking</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Granular visibility at every sorting hub, customs checkpoint, and delivery vehicle.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></div>
+                            <div>
+                                <h4 class="text-sm font-bold">Automatic Dynamic Re-Routing</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Instant AI adjustments around weather delays, port congestion, or traffic bottlenecks.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></div>
+                            <div>
+                                <h4 class="text-sm font-bold">Enterprise API Integration</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Seamlessly connect your e-commerce store or ERP directly into our dispatch pipelines.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="tracking.html" class="bg-accent hover:bg-accentHover text-white px-7 py-3.5 rounded-2xl font-bold shadow-lg shadow-accent/25 transition transform hover:-translate-y-0.5 text-sm inline-flex items-center space-x-2">
+                            <span>Track a shipment</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIVE INTERACTIVE MAP SECTION -->
+        <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+                <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3.5 py-1 rounded-full border border-accent/20">Live Infrastructure Tracker</span>
+                <h2 class="text-3xl lg:text-4xl font-black tracking-tight">Real-Time Global Logistics Hub</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Explore active global hubs, primary cargo transit channels, and live parcel distribution centers in real time.</p>
+            </div>
+
+            <div class="bg-cardBg rounded-3xl p-4 sm:p-6 shadow-2xl border border-cardBorder">
+                <div id="leaflet-hub-map" class="w-full h-[450px] rounded-2xl overflow-hidden shadow-inner border border-slate-700/50"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-slate-100 dark:bg-slate-800/60 p-4 rounded-2xl flex items-center space-x-3 border border-slate-200 dark:border-slate-700">
+                        <div class="w-10 h-10 rounded-xl bg-accent/20 text-accent flex items-center justify-center font-bold"><i class="fa-solid fa-city"></i></div>
+                        <div>
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Primary Sorting Hubs</h5>
+                            <p class="text-sm font-black">12 Major Airports & Ports</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 dark:bg-slate-800/60 p-4 rounded-2xl flex items-center space-x-3 border border-slate-200 dark:border-slate-700">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold"><i class="fa-solid fa-route"></i></div>
+                        <div>
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Active Air & Sea Lanes</h5>
+                            <p class="text-sm font-black">240+ Daily Express Flights</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 dark:bg-slate-800/60 p-4 rounded-2xl flex items-center space-x-3 border border-slate-200 dark:border-slate-700">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-500 flex items-center justify-center font-bold"><i class="fa-solid fa-box-archive"></i></div>
+                        <div>
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Fleet Coverage</h5>
+                            <p class="text-sm font-black">1,250+ GPS Land Vehicles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HUB MOSAIC / BENTO GRID -->
+        <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+                <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3.5 py-1 rounded-full border border-accent/20">Global Network Mosaic</span>
+                <h2 class="text-3xl lg:text-4xl font-black tracking-tight">State-of-the-Art Operations Facilities</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">A glimpse inside our high-capacity sorting terminals, cargo aircraft, and international shipping gateways.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="md:col-span-2 md:row-span-2 relative rounded-3xl overflow-hidden shadow-xl border border-cardBorder bg-[#0A192F] group min-h-[320px] md:min-h-[460px] flex items-end">
+                    <img src="images/hub-sorting.jpg" alt="Automated Sorting Terminal" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" width="800" height="600" onerror="tryImageFallback(this)">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#0A192F]/30 to-transparent"></div>
+                    <div class="relative z-10 p-6 sm:p-8 space-y-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-accent bg-accent/20 px-3 py-1 rounded-full">Automated Hub</span>
+                        <h3 class="text-xl sm:text-2xl font-black text-white">Next-Gen Robotic Sorting Terminals</h3>
+                        <p class="text-xs sm:text-sm text-slate-300">Processing up to 45,000 packages per hour with near-zero error rates using optical AI scanners.</p>
+                    </div>
+                </div>
+
+                <div class="md:col-span-1 lg:col-span-2 relative rounded-3xl overflow-hidden shadow-xl border border-cardBorder bg-[#0A192F] group min-h-[220px] flex items-end">
+                    <img src="images/hub-cargo-plane.jpg" alt="Express Cargo Aircraft" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" width="800" height="400" onerror="tryImageFallback(this)">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#0A192F]/40 to-transparent"></div>
+                    <div class="relative z-10 p-6 space-y-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-accent">Air Charter</span>
+                        <h3 class="text-lg font-black text-white">Dedicated Fleet & Tarmac Priority</h3>
+                    </div>
+                </div>
+
+                <div class="relative rounded-3xl overflow-hidden shadow-xl border border-cardBorder bg-[#0A192F] group min-h-[220px] flex items-end">
+                    <img src="images/hub-fleet.jpg" alt="Electric Delivery Fleet" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" width="600" height="400" onerror="tryImageFallback(this)">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#0A192F]/40 to-transparent"></div>
+                    <div class="relative z-10 p-6 space-y-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-accent">Last-Mile</span>
+                        <h3 class="text-base font-black text-white">Green Delivery Vans</h3>
+                    </div>
+                </div>
+
+                <div class="relative rounded-3xl overflow-hidden shadow-xl border border-cardBorder bg-[#0A192F] group min-h-[220px] flex items-end">
+                    <img src="images/hub-port.jpg" alt="Deep Sea Port Terminal" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" width="600" height="400" onerror="tryImageFallback(this)">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#0A192F]/40 to-transparent"></div>
+                    <div class="relative z-10 p-6 space-y-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-accent">Ocean Freight</span>
+                        <h3 class="text-base font-black text-white">Deep-Water Port Gateways</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INSTANT RATE ESTIMATOR WIDGET -->
+        <section class="py-20 bg-slate-900 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                    <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/20 px-3.5 py-1 rounded-full">Transparent Pricing</span>
+                    <h2 class="text-3xl lg:text-4xl font-black tracking-tight">Instant Shipping Rate Calculator</h2>
+                    <p class="text-slate-400 text-sm">Compare real-time delivery estimates and tiered service pricing instantly.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <div class="lg:col-span-5 bg-slate-800/80 p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl space-y-5">
+                        <h3 class="text-xl font-bold flex items-center space-x-2">
+                            <i class="fa-solid fa-sliders text-accent"></i>
+                            <span>Shipment Specifications</span>
+                        </h3>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Package Weight (kg): <span id="weight-slider-val" class="text-accent font-mono text-sm">5.0 kg</span></label>
+                            <input type="range" id="estimator-weight" min="0.5" max="50" step="0.5" value="5" oninput="updateEstimator()" class="w-full accent-accent bg-slate-900 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Origin</label>
+                                <select id="estimator-origin" onchange="updateEstimator()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:border-accent">
+                                    <option value="us">North America (USA)</option>
+                                    <option value="eu">Europe (UK / EU)</option>
+                                    <option value="asia">Asia Pacific (HK)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Destination</label>
+                                <select id="estimator-dest" onchange="updateEstimator()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:border-accent">
+                                    <option value="eu">Europe (UK / EU)</option>
+                                    <option value="us">North America (USA)</option>
+                                    <option value="asia">Asia Pacific (HK)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Insurance & Protection</label>
+                            <div class="flex items-center space-x-3 bg-slate-900 p-3 rounded-xl border border-slate-700">
+                                <input type="checkbox" id="estimator-insurance" onchange="updateEstimator()" class="w-4 h-4 accent-accent">
+                                <span class="text-xs text-slate-300 font-medium">Add Full Value Cargo Insurance (+$15.00)</span>
+                            </div>
+                        </div>
+
+                        <a href="quote.html" class="block text-center bg-accent hover:bg-accentHover text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-accent/20 transition">
+                            Book Shipment Now
+                        </a>
+                    </div>
+
+                    <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-800/40 p-6 rounded-3xl border border-slate-700/85 hover:border-slate-500 transition flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold mb-4"><i class="fa-solid fa-truck"></i></div>
+                                <h4 class="font-bold text-base text-white mb-1">Economy Ground</h4>
+                                <p class="text-xs text-slate-400">Reliable domestic and regional transit.</p>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-400 font-semibold mb-1">3 - 5 Business Days</div>
+                                <div class="text-2xl font-black text-white" id="price-ground">$45.00</div>
+                            </div>
+                            <a href="quote.html" class="block text-center bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-xl text-xs font-bold transition">Select Plan</a>
+                        </div>
+
+                        <div class="bg-gradient-to-b from-slate-800 to-slate-900 p-6 rounded-3xl border-2 border-accent shadow-xl relative flex flex-col justify-between space-y-4">
+                            <span class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-accent text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Most Popular</span>
+                            <div>
+                                <div class="w-10 h-10 rounded-2xl bg-accent/20 text-accent flex items-center justify-center font-bold mb-4"><i class="fa-solid fa-plane-up"></i></div>
+                                <h4 class="font-bold text-base text-white mb-1">Priority Air</h4>
+                                <p class="text-xs text-slate-400">Fastest airport-to-door delivery worldwide.</p>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-accent font-semibold mb-1">1 - 2 Business Days</div>
+                                <div class="text-2xl font-black text-accent" id="price-air">$125.00</div>
+                            </div>
+                            <a href="quote.html" class="block text-center bg-accent hover:bg-accentHover text-white py-2.5 rounded-xl text-xs font-bold transition shadow-md">Select Plan</a>
+                        </div>
+
+                        <div class="bg-slate-800/40 p-6 rounded-3xl border border-slate-700/85 hover:border-slate-500 transition flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold mb-4"><i class="fa-solid fa-ship"></i></div>
+                                <h4 class="font-bold text-base text-white mb-1">Ocean Container</h4>
+                                <p class="text-xs text-slate-400">Cost-effective bulk commercial cargo.</p>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-400 font-semibold mb-1">10 - 15 Business Days</div>
+                                <div class="text-2xl font-black text-white" id="price-ocean">$85.00</div>
+                            </div>
+                            <a href="quote.html" class="block text-center bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-xl text-xs font-bold transition">Select Plan</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORE SERVICES GRID -->
+        <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3.5 py-1 rounded-full border border-accent/20">Comprehensive Capabilities</span>
+                <h2 class="text-3xl lg:text-4xl font-black tracking-tight">Tailored Logistics Solutions</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Designed for e-commerce brands, manufacturers, and global enterprises.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-cardBorder/40 dark:bg-cardBg p-8 rounded-3xl border border-cardBorder shadow-xl hover:border-accent transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-accent group-hover:text-white transition">
+                        <i class="fa-solid fa-plane-departure"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Express Air Courier</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">Door-to-door express delivery for documents, parcels, and high-value priority cargo across 150+ countries.</p>
+                    <a href="services.html" class="text-accent font-bold text-sm inline-flex items-center space-x-2 group-hover:translate-x-1 transition">
+                        <span>Explore Air Services</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="bg-cardBorder/40 dark:bg-cardBg p-8 rounded-3xl border border-cardBorder shadow-xl hover:border-accent transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-accent group-hover:text-white transition">
+                        <i class="fa-solid fa-ship"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Global Freight Shipping</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">Full Container Load (FCL) and Less than Container Load (LCL) ocean freight management with port customs handling.</p>
+                    <a href="services.html" class="text-accent font-bold text-sm inline-flex items-center space-x-2 group-hover:translate-x-1 transition">
+                        <span>Explore Freight</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="bg-cardBorder/40 dark:bg-cardBg p-8 rounded-3xl border border-cardBorder shadow-xl hover:border-accent transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center text-2xl font-bold mb-6 group-hover:bg-accent group-hover:text-white transition">
+                        <i class="fa-solid fa-warehouse"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Smart Warehousing</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">Automated fulfillment centers, temperature-controlled storage, and real-time inventory management sync.</p>
+                    <a href="services.html" class="text-accent font-bold text-sm inline-flex items-center space-x-2 group-hover:translate-x-1 transition">
+                        <span>Explore Warehousing</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- THREE ALTERNATING SERVICE ROWS -->
+        <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+            <div class="text-center max-w-2xl mx-auto mb-4 space-y-3">
+                <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3.5 py-1 rounded-full border border-accent/20">Tiered Capabilities</span>
+                <h2 class="text-3xl lg:text-4xl font-black tracking-tight">Core Logistics Divisions</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Deep dive into our specialized transport networks engineered for absolute reliability.</p>
+            </div>
+
+            <!-- Row 1: Air Express -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 relative rounded-3xl overflow-hidden shadow-2xl border border-cardBorder bg-[#0A192F] min-h-[380px] flex items-center justify-center">
+                    <img src="images/service-air.jpg" alt="Air Express Delivery" class="absolute inset-0 w-full h-full object-cover" loading="lazy" width="800" height="600" onerror="tryImageFallback(this)">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-[#0A192F]/80 via-transparent to-transparent"></div>
+                </div>
+                <div class="lg:col-span-6 space-y-6">
+                    <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3 py-1 rounded-full">Division 01</span>
+                    <h3 class="text-2xl sm:text-3xl font-black">Air Express & Priority Charter</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                        When minutes matter, our priority air courier service ensures your time-sensitive cargo bypasses conventional bottlenecks with scheduled airline allocations and direct charter options.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>12-24 Hour Door-to-Door Delivery SLA</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>Real-time IoT temperature and shock telemetry</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>Automated pre-arrival customs clearance</span>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <a href="services.html" class="inline-block bg-accent hover:bg-accentHover text-white px-6 py-3 rounded-xl font-bold text-xs shadow-lg transition">Explore Air Services</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Ocean Freight (Reversed) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 lg:order-2 relative rounded-3xl overflow-hidden shadow-2xl border border-cardBorder bg-[#0A192F] min-h-[380px] flex items-center justify-center">
+                    <img src="images/service-ocean.jpg" alt="Ocean Freight Shipping" class="absolute inset-0 w-full h-full object-cover" loading="lazy" width="800" height="600" onerror="tryImageFallback(this)">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-[#0A192F]/80 via-transparent to-transparent"></div>
+                </div>
+                <div class="lg:col-span-6 lg:order-1 space-y-6">
+                    <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3 py-1 rounded-full">Division 02</span>
+                    <h3 class="text-2xl sm:text-3xl font-black">Global Ocean Freight & Container Lines</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                        Optimize your supply chain costs for large-scale commercial shipments. We maintain direct carrier contracts across all major global shipping alliances to guarantee vessel space and competitive rates.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>Full Container Load (FCL) & LCL consolidation</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>Direct port-to-port and multimodal inland drayage</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>Comprehensive container security lock tracking</span>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <a href="services.html" class="inline-block bg-accent hover:bg-accentHover text-white px-6 py-3 rounded-xl font-bold text-xs shadow-lg transition">Explore Ocean Freight</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Smart Warehousing -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 relative rounded-3xl overflow-hidden shadow-2xl border border-cardBorder bg-[#0A192F] min-h-[380px] flex items-center justify-center">
+                    <img src="images/service-warehouse.jpg" alt="Smart Warehousing & Fulfillment" class="absolute inset-0 w-full h-full object-cover" loading="lazy" width="800" height="600" onerror="tryImageFallback(this)">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-[#0A192F]/80 via-transparent to-transparent"></div>
+                </div>
+                <div class="lg:col-span-6 space-y-6">
+                    <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3 py-1 rounded-full">Division 03</span>
+                    <h3 class="text-2xl sm:text-3xl font-black">Smart Warehousing & Automated Fulfillment</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                        Outsource your inventory storage and order fulfillment to our high-tech hubs. Featuring pick-and-pack robotics, barcode scanning, and multi-channel e-commerce platform integration.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>Real-time inventory synchronization across Shopify & WooCommerce</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>Temperature-controlled cold chain storage bays</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm font-semibold">
+                            <div class="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                            <span>Same-day pick, pack, and dispatch processing</span>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <a href="services.html" class="inline-block bg-accent hover:bg-accentHover text-white px-6 py-3 rounded-xl font-bold text-xs shadow-lg transition">Explore Warehousing</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESTRICTIONS CHECKER -->
+        <section class="py-20 bg-slate-900 text-white border-y border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl mx-auto bg-slate-800/90 p-8 sm:p-12 rounded-3xl border border-slate-700 shadow-2xl space-y-6">
+                    <div class="text-center space-y-2">
+                        <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/20 px-3.5 py-1 rounded-full">Compliance Tool</span>
+                        <h3 class="text-2xl sm:text-3xl font-black">International Item Restrictions Checker</h3>
+                        <p class="text-slate-400 text-xs sm:text-sm">Search any commodity or item to verify import/export customs compliance instantly.</p>
+                    </div>
+
+                    <div class="relative">
+                        <i class="fa-solid fa-search absolute left-4 top-4 text-slate-400"></i>
+                        <input type="text" id="restriction-search" oninput="filterRestrictions()" placeholder="Type item name (e.g., lithium batteries, perfume, electronics, documents)..." class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-900 border border-slate-700 text-white placeholder-slate-400 text-sm font-semibold focus:outline-none focus:border-accent">
+                    </div>
+
+                    <div id="restriction-results" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-700 flex items-center justify-between item-card" data-name="lithium batteries">
+                            <span class="text-sm font-medium text-slate-200">Lithium-Ion Batteries</span>
+                            <span class="px-2.5 py-1 bg-amber-500/20 text-amber-400 text-xs font-bold rounded-full">Restricted / MSDS Req.</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-700 flex items-center justify-between item-card" data-name="perfume aerosol liquid">
+                            <span class="text-sm font-medium text-slate-200">Perfumes & Aerosols</span>
+                            <span class="px-2.5 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded-full">Prohibited (Hazardous)</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-700 flex items-center justify-between item-card" data-name="electronics laptop smartphone">
+                            <span class="text-sm font-medium text-slate-200">Laptops & Smartphones</span>
+                            <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">Allowed (Inspected)</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-700 flex items-center justify-between item-card" data-name="documents paper passport">
+                            <span class="text-sm font-medium text-slate-200">Commercial Documents</span>
+                            <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">Fully Allowed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FREQUENTLY ASKED QUESTIONS -->
+        <section class="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+                <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3.5 py-1 rounded-full border border-accent/20">Got Questions?</span>
+                <h2 class="text-3xl lg:text-4xl font-black tracking-tight">Frequently Asked Questions</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Everything you need to know about our global shipping and tracking services.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-cardBg border border-cardBorder rounded-2xl overflow-hidden shadow-md">
+                    <button onclick="toggleFaq(1)" class="w-full p-5 text-left font-bold flex items-center justify-between text-sm sm:text-base">
+                        <span>How do I track my shipment in real time?</span>
+                        <i id="faq-icon-1" class="fa-solid fa-chevron-down text-accent transition-transform"></i>
+                    </button>
+                    <div id="faq-content-1" class="hidden px-5 pb-5 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-cardBorder/50 pt-3">
+                        Simply enter your Waybill number or tracking code (e.g., TRK123456) into our tracking input bar on the homepage or dedicated Track page. Our telemetry system will display live progress milestones and timestamps instantly.
+                    </div>
+                </div>
+
+                <div class="bg-cardBg border border-cardBorder rounded-2xl overflow-hidden shadow-md">
+                    <button onclick="toggleFaq(2)" class="w-full p-5 text-left font-bold flex items-center justify-between text-sm sm:text-base">
+                        <span>What is included in the instant shipping rate estimate?</span>
+                        <i id="faq-icon-2" class="fa-solid fa-chevron-down text-accent transition-transform"></i>
+                    </button>
+                    <div id="faq-content-2" class="hidden px-5 pb-5 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-cardBorder/50 pt-3">
+                        Our instant rate calculator includes base transport fees, standard customs documentation handling, and estimated delivery windows based on origin, destination, and package weight.
+                    </div>
+                </div>
+
+                <div class="bg-cardBg border border-cardBorder rounded-2xl overflow-hidden shadow-md">
+                    <button onclick="toggleFaq(3)" class="w-full p-5 text-left font-bold flex items-center justify-between text-sm sm:text-base">
+                        <span>Are my shipments insured against loss or damage?</span>
+                        <i id="faq-icon-3" class="fa-solid fa-chevron-down text-accent transition-transform"></i>
+                    </button>
+                    <div id="faq-content-3" class="hidden px-5 pb-5 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-cardBorder/50 pt-3">
+                        Yes! All shipments include standard carrier liability coverage. You can also opt for our Full Value Cargo Insurance during checkout or rate calculation for 100% complete peace of mind.
+                    </div>
+                </div>
+
+                <div class="bg-cardBg border border-cardBorder rounded-2xl overflow-hidden shadow-md">
+                    <button onclick="toggleFaq(4)" class="w-full p-5 text-left font-bold flex items-center justify-between text-sm sm:text-base">
+                        <span>How do I schedule an express pickup for my business?</span>
+                        <i id="faq-icon-4" class="fa-solid fa-chevron-down text-accent transition-transform"></i>
+                    </button>
+                    <div id="faq-content-4" class="hidden px-5 pb-5 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-cardBorder/50 pt-3">
+                        You can schedule a pickup directly through our Get a Quote page or by contacting our 24/7 global support dispatch center. Enterprise clients can also utilize our API for automated scheduling.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARALLAX CTA BANNER -->
+        <section class="relative py-24 parallax-bg text-white overflow-hidden" data-local-background="images/cta-banner.jpg">
+            <div class="absolute inset-0 bg-[#0A192F]/85 backdrop-blur-sm"></div>
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
+                <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/20 px-4 py-1.5 rounded-full border border-accent/30 inline-block">Global Supply Chain Excellence</span>
+                <h2 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">Your cargo never stops. Neither do we.</h2>
+                <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+                    Join over 45,000 businesses worldwide that rely on SwiftLogistics for secure, on-time express courier and freight delivery.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                    <a href="quote.html" class="w-full sm:w-auto bg-accent hover:bg-accentHover text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-xl shadow-accent/30 transition transform hover:-translate-y-0.5">
+                        Get a quote
+                    </a>
+                    <a href="tracking.html" class="w-full sm:w-auto bg-slate-800/90 hover:bg-slate-700 text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-xl border border-slate-700 transition transform hover:-translate-y-0.5">
+                        Track a shipment
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRUST & TESTIMONIALS -->
+        <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3.5 py-1 rounded-full border border-accent/20">Client Success Stories</span>
+                <h2 class="text-3xl lg:text-4xl font-black tracking-tight">Trusted by Global Enterprises</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Read verified feedback from our e-commerce sellers and corporate logistics partners.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-cardBg p-8 rounded-3xl border border-cardBorder shadow-xl relative flex flex-col justify-between space-y-6">
+                    <div class="absolute -top-4 right-8 bg-accent text-white w-8 h-8 rounded-full flex items-center justify-center font-black shadow-md"><i class="fa-solid fa-quote-right text-xs"></i></div>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-1 text-amber-400 text-xs">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 italic leading-relaxed">
+                            "SwiftLogistics transformed our cross-border e-commerce fulfillment. Our transit times dropped by 30%, and customer satisfaction is at an all-time high."
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-cardBorder">
+                        <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-accent">JD</div>
+                        <div>
+                            <h4 class="text-xs font-bold">Jonathan Davis</h4>
+                            <p class="text-[10px] text-slate-400">Operations Director, Apex Retail</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-cardBg p-8 rounded-3xl border border-cardBorder shadow-xl relative flex flex-col justify-between space-y-6">
+                    <div class="absolute -top-4 right-8 bg-accent text-white w-8 h-8 rounded-full flex items-center justify-center font-black shadow-md"><i class="fa-solid fa-quote-right text-xs"></i></div>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-1 text-amber-400 text-xs">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 italic leading-relaxed">
+                            "The live GPS telemetry and automated customs clearance saved us countless hours of administrative delays. Absolute professionals."
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-cardBorder">
+                        <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-accent">SM</div>
+                        <div>
+                            <h4 class="text-xs font-bold">Sarah Martinez</h4>
+                            <p class="text-[10px] text-slate-400">Supply Chain Lead, BioHealth Corp</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-cardBg p-8 rounded-3xl border border-cardBorder shadow-xl relative flex flex-col justify-between space-y-6">
+                    <div class="absolute -top-4 right-8 bg-accent text-white w-8 h-8 rounded-full flex items-center justify-center font-black shadow-md"><i class="fa-solid fa-quote-right text-xs"></i></div>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-1 text-amber-400 text-xs">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 italic leading-relaxed">
+                            "Their instant rate calculator and transparent pricing have made budgeting our monthly heavy machinery imports remarkably straightforward."
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-cardBorder">
+                        <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-accent">AK</div>
+                        <div>
+                            <h4 class="text-xs font-bold">Ahmad Kassim</h4>
+                            <p class="text-[10px] text-slate-400">CEO, Nexus Industrial</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating AI Virtual Assistant Chat Widget -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button onclick="toggleChatDrawer()" id="chat-toggle-btn" class="w-14 h-14 rounded-full bg-accent text-white shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition shadow-accent/40">
+            <i class="fa-solid fa-comments"></i>
+        </button>
+
+        <div id="chat-drawer" class="hidden absolute bottom-20 right-0 w-80 sm:w-96 bg-cardBg border border-cardBorder rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="bg-primary text-white p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <h4 class="font-bold text-sm">Swift Logistics AI Assistant</h4>
+                </div>
+                <button onclick="toggleChatDrawer()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div id="chat-messages" class="p-4 h-72 overflow-y-auto space-y-3 text-xs sm:text-sm bg-slate-50 dark:bg-slate-900/50">
+                <div class="bg-cardBg p-3 rounded-2xl border border-cardBorder shadow-sm max-w-[85%]">
+                    Hello! I'm your AI logistics assistant. Ask me anything about tracking a package, shipping rates, or customs restrictions!
+                </div>
+            </div>
+
+            <div class="p-3 bg-cardBg border-t border-cardBorder flex items-center space-x-2">
+                <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow bg-slate-100 dark:bg-slate-800 border border-cardBorder rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-accent">
+                <button onclick="sendChatMessage()" class="bg-accent text-white px-4 py-2 rounded-xl text-xs font-bold shadow transition"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white border-t border-slate-800 pt-16 pb-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+            <div class="lg:col-span-2 space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-accent text-white p-2 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-shipping-fast text-xl"></i>
+                    </div>
+                    <span class="text-xl font-black">Swift<span class="text-accent">Logistics</span></span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
+                    Global courier, express freight, and automated supply chain solutions engineered for speed, accuracy, and absolute reliability.
+                </p>
+                <div class="flex space-x-4 pt-2 text-slate-400 text-lg">
+                    <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="font-bold text-sm tracking-wider uppercase text-slate-300">Quick Links</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="index.html" class="hover:text-accent transition">Home</a></li>
+                    <li><a href="about.html" class="hover:text-accent transition">About Us</a></li>
+                    <li><a href="services.html" class="hover:text-accent transition">Services</a></li>
+                    <li><a href="tracking.html" class="hover:text-accent transition">Track Shipment</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="font-bold text-sm tracking-wider uppercase text-slate-300">Services</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="services.html" class="hover:text-accent transition">Express Delivery</a></li>
+                    <li><a href="services.html" class="hover:text-accent transition">Air Cargo</a></li>
+                    <li><a href="services.html" class="hover:text-accent transition">Ocean Freight</a></li>
+                    <li><a href="services.html" class="hover:text-accent transition">Smart Warehousing</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="font-bold text-sm tracking-wider uppercase text-slate-300">Legal & Support</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="contact.html" class="hover:text-accent transition">Contact Support</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Terms of Service</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Customs Compliance</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+            <p>&copy; 2026 SwiftLogistics Global Inc. All rights reserved.</p>
+            <div class="flex space-x-6 mt-4 sm:mt-0">
+                <a href="#" class="hover:text-slate-400">Security</a>
+                <a href="#" class="hover:text-slate-400">SLA Guarantees</a>
+                <a href="#" class="hover:text-slate-400">System Status: <span class="text-emerald-400 font-bold">Operational</span></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Hero Tab Switcher (Track vs Estimate)
+        function switchHeroTab(tab) {
+            const trackTab = document.getElementById('hero-tab-track');
+            const estimateTab = document.getElementById('hero-tab-estimate');
+            const trackPanel = document.getElementById('hero-panel-track');
+            const estimatePanel = document.getElementById('hero-panel-estimate');
+
+            if (tab === 'track') {
+                trackTab.className = "flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold bg-accent text-white shadow transition flex items-center justify-center space-x-2";
+                estimateTab.className = "flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center justify-center space-x-2";
+                trackPanel.classList.remove('hidden');
+                estimatePanel.classList.add('hidden');
+            } else {
+                estimateTab.className = "flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold bg-accent text-white shadow transition flex items-center justify-center space-x-2";
+                trackTab.className = "flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center justify-center space-x-2";
+                estimatePanel.classList.remove('hidden');
+                trackPanel.classList.add('hidden');
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            
+            const icon = document.getElementById('theme-icon');
+            const iconMobile = document.getElementById('theme-icon-mobile');
+            if (isDark) {
+                if (icon) icon.className = "fa-solid fa-sun text-lg";
+                if (iconMobile) iconMobile.className = "fa-solid fa-sun";
+            } else {
+                if (icon) icon.className = "fa-solid fa-moon text-lg";
+                if (iconMobile) iconMobile.className = "fa-solid fa-moon";
+            }
+        }
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Leaflet Map Initialization
+        function initLeafletMap() {
+            const mapContainer = document.getElementById('leaflet-hub-map');
+            if (!mapContainer) return;
+
+            const map = L.map('leaflet-hub-map').setView([30, 10], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            const hubs = [
+                { name: "New York Hub (JFK)", coords: [40.7128, -74.0060] },
+                { name: "London Hub (LHR)", coords: [51.5074, -0.1278] },
+                { name: "Frankfurt Hub (FRA)", coords: [50.1109, 8.6821] },
+                { name: "Hong Kong Hub (HKG)", coords: [22.3193, 114.1694] }
+            ];
+
+            hubs.forEach(h => {
+                L.marker(h.coords).addTo(map).bindPopup(`<b>${h.name}</b><br>Status: Operational`);
+            });
+        }
+
+        // Quick Track from Hero
+        function quickTrack() {
+            const val = document.getElementById('hero-tracking-input').value.trim();
+            if (!val) {
+                alert('Please enter a tracking waybill number.');
+                return;
+            }
+            window.location.href = `tracking.html?code=${encodeURIComponent(val)}`;
+        }
+
+        // Hero Instant Rate Calculator
+        function calculateHeroEstimate() {
+            const weight = parseFloat(document.getElementById('hero-calc-weight').value) || 5;
+            const rate = (25 + (weight * 12)).toFixed(2);
+            document.getElementById('hero-calc-result').innerText = `$${rate}`;
+        }
+
+        // Homepage Estimator Widget
+        function updateEstimator() {
+            const weight = parseFloat(document.getElementById('estimator-weight').value) || 5;
+            document.getElementById('weight-slider-val').innerText = `${weight} kg`;
+            
+            const insurance = document.getElementById('estimator-insurance').checked ? 15 : 0;
+
+            const ground = (35 + (weight * 2) + insurance).toFixed(2);
+            const air = (85 + (weight * 8) + insurance).toFixed(2);
+            const ocean = (60 + (weight * 4) + insurance).toFixed(2);
+
+            document.getElementById('price-ground').innerText = `$${ground}`;
+            document.getElementById('price-air').innerText = `$${air}`;
+            document.getElementById('price-ocean').innerText = `$${ocean}`;
+        }
+
+        // Prohibited Items Filter
+        function filterRestrictions() {
+            const q = document.getElementById('restriction-search').value.toLowerCase();
+            const cards = document.querySelectorAll('.item-card');
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(q)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // FAQ Accordion Toggle
+        function toggleFaq(id) {
+            const content = document.getElementById('faq-content-' + id);
+            const icon = document.getElementById('faq-icon-' + id);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Chat Drawer Toggle
+        function toggleChatDrawer() {
+            const drawer = document.getElementById('chat-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        // Chat Message Sender
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const container = document.getElementById('chat-messages');
+            container.innerHTML += `<div class="bg-accent text-white p-3 rounded-2xl shadow-sm max-w-[85%] ml-auto">${msg}</div>`;
+            input.value = '';
+
+            setTimeout(() => {
+                container.innerHTML += `<div class="bg-cardBg p-3 rounded-2xl border border-cardBorder shadow-sm max-w-[85%]">Thank you for your inquiry! Our dispatch team can assist you further at support@swiftlogistics.com or via our 24/7 hotline at +1 (800) 555-0199.</div>`;
+                container.scrollTop = container.scrollHeight;
+            }, 800);
+        }
+
+        // Try common locations for uploaded local images. File names and extensions
+        // must still match exactly, including capitalization.
+        function imagePathCandidates(path) {
+            const filename = decodeURIComponent(path.split('/').pop());
+            return [...new Set([
+                path,
+                `./${filename}`,
+                `/images/${filename}`,
+                `/${filename}`,
+                `../images/${filename}`
+            ])];
+        }
+
+        function resolveLocalImage(path, onFound, onMissing) {
+            const candidates = imagePathCandidates(path);
+            let index = 0;
+            const tryNext = () => {
+                if (index >= candidates.length) {
+                    onMissing?.();
+                    return;
+                }
+                const candidate = candidates[index++];
+                const probe = new Image();
+                probe.onload = () => onFound(candidate);
+                probe.onerror = tryNext;
+                probe.src = candidate;
+            };
+            tryNext();
+        }
+
+        function tryImageFallback(img) {
+            if (img.dataset.checkingImagePaths) return;
+            img.dataset.checkingImagePaths = 'true';
+            const originalPath = img.getAttribute('src');
+            resolveLocalImage(originalPath, (workingPath) => {
+                img.src = workingPath;
+                delete img.dataset.checkingImagePaths;
+            }, () => {
+                console.warn(`Image not found: ${originalPath}. Check that the file is uploaded and the name, extension, capitalization, and folder path match.`);
+                img.removeAttribute('src');
+                img.alt = `${img.alt} (image file not found)`;
+            });
+        }
+
+        // Resolve the CTA background image using the same path checks as <img> tags.
+        document.querySelectorAll('[data-local-background]').forEach((section) => {
+            const path = section.dataset.localBackground;
+            resolveLocalImage(path, (workingPath) => {
+                section.style.backgroundImage = `url("${workingPath}")`;
+            }, () => {
+                console.warn(`Background image not found: ${path}. Check the uploaded file path and exact filename.`);
+            });
+        });
+
+        // Initialize on load
+        window.onload = () => {
+            updateEstimator();
+            initLeafletMap();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Shipment | SwiftLogistics - Global Courier & Supply Chain Solutions</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        secondary: 'var(--color-secondary)',
+                        accent: 'var(--color-accent)',
+                        accentHover: 'var(--color-accent-hover)',
+                        cardBg: 'var(--color-card)',
+                        cardBorder: 'var(--color-border)',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --color-bg: #F8FAFC;
+            --color-text: #0F172A;
+            --color-primary: #0A192F;
+            --color-secondary: #1E293B;
+            --color-accent: #FF6B00;
+            --color-accent-hover: #E05D00;
+            --color-card: #FFFFFF;
+            --color-border: #E2E8F0;
+        }
+
+        .dark {
+            --color-bg: #030712;
+            --color-text: #F8FAFC;
+            --color-primary: #0B0F19;
+            --color-secondary: #111827;
+            --color-accent: #FF6B00;
+            --color-accent-hover: #FF8533;
+            --color-card: #111827;
+            --color-border: #1F2937;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Parallax BG class */
+        .parallax-bg {
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        @media (max-width: 1023px) {
+            .parallax-bg {
+                background-attachment: scroll;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94A3B8;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Sticky Navigation Header -->
+    <header class="sticky top-0 z-50 bg-primary/95 dark:bg-black/90 backdrop-blur-md border-b border-slate-800 text-white shadow-xl transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo -->
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="bg-accent text-white p-2.5 rounded-2xl shadow-lg shadow-accent/30 flex items-center justify-center transform hover:scale-105 transition">
+                        <i class="fa-solid fa-shipping-fast text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-black tracking-tight text-white">Swift<span class="text-accent">Logistics</span></span>
+                        <span class="block text-[10px] font-bold text-slate-400 tracking-widest uppercase">Global Freight & Courier</span>
+                    </div>
+                </a>
+
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-5 font-semibold text-sm">
+                    <a href="index.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">Home</a>
+                    <a href="about.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">About Us</a>
+                    <a href="services.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">Services</a>
+                    <a href="tracking.html" class="px-3 py-2 rounded-xl text-accent transition">Track</a>
+                    <a href="quote.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">Rate Calculator</a>
+                    <a href="contact.html" class="px-3 py-2 rounded-xl text-slate-300 hover:text-white transition">Contact</a>
+                </nav>
+
+                <!-- Right Action Bar & Theme Toggle -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-800/80 text-amber-400 hover:bg-slate-700 transition" title="Toggle Light/Dark Theme">
+                        <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+                    </button>
+                    <a href="tel:+18005550199" class="flex items-center space-x-2 text-slate-300 hover:text-accent text-sm font-semibold transition">
+                        <i class="fa-solid fa-headset text-accent text-lg"></i>
+                        <span>+1 (800) 555-0199</span>
+                    </a>
+                    <a href="tracking.html" class="bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-accent/25 transition transform hover:-translate-y-0.5 text-sm">
+                        Track Package
+                    </a>
+                </div>
+
+                <!-- Mobile Menu & Theme Controls -->
+                <div class="md:hidden flex items-center space-x-2">
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-800 text-amber-400 hover:bg-slate-700">
+                        <i id="theme-icon-mobile" class="fa-solid fa-moon"></i>
+                    </button>
+                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-primary/98 dark:bg-black/98 border-b border-slate-800 px-4 pt-2 pb-6 space-y-2 backdrop-blur-lg">
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">Home</a>
+            <a href="about.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">About Us</a>
+            <a href="services.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">Services</a>
+            <a href="tracking.html" class="block w-full text-left px-4 py-3 rounded-xl text-white font-semibold hover:bg-slate-800">Track Shipment</a>
+            <a href="quote.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">Rate Calculator</a>
+            <a href="contact.html" class="block w-full text-left px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800">Contact Us</a>
+            <div class="pt-2">
+                <a href="tracking.html" class="block w-full bg-accent text-white py-3 rounded-xl font-bold shadow-md text-center">Track Package</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+
+        <!-- HERO SECTION -->
+        <section class="relative bg-gradient-to-br from-[#060D1A] via-primary to-[#0E1F38] text-white py-20 lg:py-28 overflow-hidden text-center">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
+                <div class="inline-flex items-center space-x-2.5 bg-accent/15 border border-accent/40 px-4 py-1.5 rounded-full text-accent font-bold text-xs tracking-wider uppercase backdrop-blur-md">
+                    <span class="flex h-2 w-2 rounded-full bg-accent animate-ping"></span>
+                    <span>Live Telemetry Hub</span>
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                    Real-Time <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent via-orange-400 to-amber-300">Shipment Telemetry</span>
+                </h1>
+                <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                    Monitor package progress, cargo plane transit, and customs clearances across all global hubs with scan-by-scan accuracy.
+                </p>
+            </div>
+        </section>
+
+        <!-- INTRODUCTORY WRITE-UP & BLUE CONTAINER TRACKING SECTION -->
+        <section class="py-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            
+            <!-- Introductory Overview Text Block -->
+            <div class="max-w-3xl mx-auto text-center space-y-4">
+                <span class="text-accent font-extrabold uppercase text-xs tracking-widest bg-accent/10 px-3.5 py-1 rounded-full border border-accent/20">Scan-By-Scan Telemetry</span>
+                <h2 class="text-2xl sm:text-3xl font-black">How Our Global Tracking Works</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                    Every shipment dispatched through SwiftLogistics receives an encrypted IoT barcode identifier. As your package moves between air hubs, sorting centers, customs terminals, and last-mile vehicles, our telemetry sensors automatically log physical timestamps and GPS location checkpoints directly into this portal.
+                </p>
+            </div>
+
+            <!-- Deep Blue Container Card -->
+            <div class="bg-gradient-to-br from-[#0A192F] via-[#0F2342] to-[#060D1A] text-white p-6 sm:p-10 lg:p-12 rounded-3xl border border-slate-700/80 shadow-2xl space-y-8">
+                
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-slate-800 pb-6 gap-4">
+                    <div>
+                        <label for="main-tracking-input" class="text-xl sm:text-2xl font-black text-white block">
+                            Enter Package Shipment / Tracking ID
+                        </label>
+                        <span class="text-xs text-slate-400 font-medium">Input your waybill reference number below for live status updates.</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs text-slate-400 bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-800">
+                        <i class="fa-solid fa-satellite text-accent"></i>
+                        <span>Real-Time Sensor Link Active</span>
+                    </div>
+                </div>
+
+                <!-- Input Field Row -->
+                <div class="space-y-3">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-grow">
+                            <i class="fa-solid fa-barcode absolute left-4 top-4 text-slate-400 text-lg"></i>
+                            <input type="text" id="main-tracking-input" placeholder="e.g. TRK123456 or EXP987654" class="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-900/90 border border-slate-700 text-white placeholder-slate-500 text-sm font-semibold focus:outline-none focus:border-accent">
+                        </div>
+                        <button onclick="runTrackingLookup()" class="bg-accent hover:bg-accentHover text-white px-9 py-4 rounded-2xl font-bold text-sm tracking-wide shadow-lg shadow-accent/25 transition whitespace-nowrap transform hover:-translate-y-0.5">
+                            Track Shipment
+                        </button>
+                    </div>
+
+                    <div class="text-xs text-slate-400 flex items-center justify-between px-1 pt-1">
+                        <span>Click sample code: <strong class="text-accent cursor-pointer underline font-mono" onclick="setSampleCode('TRK123456')">TRK123456</strong> or <strong class="text-accent cursor-pointer underline font-mono" onclick="setSampleCode('EXP987654')">EXP987654</strong></span>
+                        <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-halved mr-1"></i> SSL Encrypted</span>
+                    </div>
+                </div>
+
+                <!-- Dynamic Tracking Result Container -->
+                <div id="tracking-result-box" class="hidden space-y-8 pt-8 border-t border-slate-800">
+                    
+                    <!-- Quick Metrics Summary Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Waybill Reference</span>
+                            <h3 id="track-id-display" class="text-xl font-black font-mono text-accent">TRK123456</h3>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Current Status</span>
+                            <span id="track-status-badge" class="px-3.5 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full inline-block">In Transit</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Estimated Delivery</span>
+                            <h4 id="track-eta-display" class="text-sm font-bold text-white">Tomorrow, 2:00 PM</h4>
+                        </div>
+                    </div>
+
+                    <!-- Origin to Destination Route Indicator -->
+                    <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-accent/20 text-accent flex items-center justify-center font-bold"><i class="fa-solid fa-location-dot"></i></div>
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400">Origin Gateway</span>
+                                <h5 class="text-xs font-bold text-white">New York, USA (JFK Terminal)</h5>
+                            </div>
+                        </div>
+
+                        <div class="hidden sm:flex items-center space-x-2 text-accent text-xs font-bold flex-grow justify-center">
+                            <span>••••••••••••</span>
+                            <i class="fa-solid fa-plane text-base animate-pulse"></i>
+                            <span>••••••••••••</span>
+                        </div>
+
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold"><i class="fa-solid fa-flag-checkered"></i></div>
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400">Destination Gateway</span>
+                                <h5 class="text-xs font-bold text-white">London, UK (LHR Hub)</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Milestone Activity Audit -->
+                    <div class="space-y-6 pt-2">
+                        <h4 class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Audit Trail & Sensor Events</h4>
+                        
+                        <div class="relative border-l-2 border-accent/40 ml-4 space-y-8 pb-2">
+                            
+                            <!-- Milestone 1 -->
+                            <div class="relative pl-6">
+                                <span class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-accent ring-4 ring-accent/20"></span>
+                                <div class="flex items-center justify-between">
+                                    <h5 class="font-bold text-sm text-white">Waybill Label Created</h5>
+                                    <span class="text-[11px] text-slate-400 font-mono">Oct 12, 09:00 AM</span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1">Order registered at New York Central Dispatch Center.</p>
+                            </div>
+
+                            <!-- Milestone 2 -->
+                            <div class="relative pl-6">
+                                <span class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-accent ring-4 ring-accent/20"></span>
+                                <div class="flex items-center justify-between">
+                                    <h5 class="font-bold text-sm text-white">Scanned at Departure Sorting Hub</h5>
+                                    <span class="text-[11px] text-slate-400 font-mono">Oct 12, 02:30 PM</span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1">Optical AI weight & dimension check passed at JFK Hub.</p>
+                            </div>
+
+                            <!-- Milestone 3 -->
+                            <div class="relative pl-6">
+                                <span class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-accent ring-4 ring-accent/20"></span>
+                                <div class="flex items-center justify-between">
+                                    <h5 class="font-bold text-sm text-white">In Transit (Air Cargo Flight #442)</h5>
+                                    <span class="text-[11px] text-slate-400 font-mono">Oct 13, 04:15 AM</span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1">Transatlantic air charter flight in progress.</p>
+                            </div>
+
+                            <!-- Milestone 4 (Pending) -->
+                            <div class="relative pl-6">
+                                <span class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-slate-700"></span>
+                                <div class="flex items-center justify-between">
+                                    <h5 class="font-bold text-sm text-slate-500">Customs Inspection & LHR Gateway Arrival</h5>
+                                    <span class="text-[11px] text-slate-500 font-mono">Pending</span>
+                                </div>
+                                <p class="text-xs text-slate-500">Pre-arrival documentation verified.</p>
+                            </div>
+
+                            <!-- Milestone 5 (Pending) -->
+                            <div class="relative pl-6">
+                                <span class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-slate-700"></span>
+                                <div class="flex items-center justify-between">
+                                    <h5 class="font-bold text-sm text-slate-500">Out for Final Delivery</h5>
+                                    <span class="text-[11px] text-slate-500 font-mono">Pending</span>
+                                </div>
+                                <p class="text-xs text-slate-500">Assigned to courier van.</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating AI Virtual Assistant Chat Widget -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button onclick="toggleChatDrawer()" id="chat-toggle-btn" class="w-14 h-14 rounded-full bg-accent text-white shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition shadow-accent/40">
+            <i class="fa-solid fa-comments"></i>
+        </button>
+
+        <div id="chat-drawer" class="hidden absolute bottom-20 right-0 w-80 sm:w-96 bg-cardBg border border-cardBorder rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="bg-primary text-white p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <h4 class="font-bold text-sm">Swift Logistics AI Assistant</h4>
+                </div>
+                <button onclick="toggleChatDrawer()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div id="chat-messages" class="p-4 h-72 overflow-y-auto space-y-3 text-xs sm:text-sm bg-slate-50 dark:bg-slate-900/50">
+                <div class="bg-cardBg p-3 rounded-2xl border border-cardBorder shadow-sm max-w-[85%]">
+                    Hello! Having trouble finding your tracking code or need assistance with a delayed package? Ask me!
+                </div>
+            </div>
+
+            <div class="p-3 bg-cardBg border-t border-cardBorder flex items-center space-x-2">
+                <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow bg-slate-100 dark:bg-slate-800 border border-cardBorder rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-accent">
+                <button onclick="sendChatMessage()" class="bg-accent text-white px-4 py-2 rounded-xl text-xs font-bold shadow transition"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white border-t border-slate-800 pt-16 pb-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+            <div class="lg:col-span-2 space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-accent text-white p-2 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-shipping-fast text-xl"></i>
+                    </div>
+                    <span class="text-xl font-black">Swift<span class="text-accent">Logistics</span></span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
+                    Global courier, express freight, and automated supply chain solutions engineered for speed, accuracy, and absolute reliability.
+                </p>
+                <div class="flex space-x-4 pt-2 text-slate-400 text-lg">
+                    <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="font-bold text-sm tracking-wider uppercase text-slate-300">Quick Links</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="index.html" class="hover:text-accent transition">Home</a></li>
+                    <li><a href="about.html" class="hover:text-accent transition">About Us</a></li>
+                    <li><a href="services.html" class="hover:text-accent transition">Services</a></li>
+                    <li><a href="tracking.html" class="hover:text-accent transition">Track Shipment</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="font-bold text-sm tracking-wider uppercase text-slate-300">Services</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="services.html" class="hover:text-accent transition">Express Delivery</a></li>
+                    <li><a href="services.html" class="hover:text-accent transition">Air Cargo</a></li>
+                    <li><a href="services.html" class="hover:text-accent transition">Ocean Freight</a></li>
+                    <li><a href="services.html" class="hover:text-accent transition">Smart Warehousing</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="font-bold text-sm tracking-wider uppercase text-slate-300">Legal & Support</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="contact.html" class="hover:text-accent transition">Contact Support</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Terms of Service</a></li>
+                    <li><a href="#" class="hover:text-accent transition">Customs Compliance</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+            <p>&copy; 2026 SwiftLogistics Global Inc. All rights reserved.</p>
+            <div class="flex space-x-6 mt-4 sm:mt-0">
+                <a href="#" class="hover:text-slate-400">Security</a>
+                <a href="#" class="hover:text-slate-400">SLA Guarantees</a>
+                <a href="#" class="hover:text-slate-400">System Status: <span class="text-emerald-400 font-bold">Operational</span></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        function setSampleCode(code) {
+            document.getElementById('main-tracking-input').value = code;
+            runTrackingLookup();
+        }
+
+        function runTrackingLookup() {
+            const input = document.getElementById('main-tracking-input');
+            const code = input.value.trim();
+            const resultBox = document.getElementById('tracking-result-box');
+
+            if (!code) {
+                alert('Please enter a waybill or tracking code.');
+                return;
+            }
+
+            resultBox.classList.remove('hidden');
+            document.getElementById('track-id-display').innerText = code.toUpperCase();
+            
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Auto-run lookup if URL query contains ?code=
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const codeParam = params.get('code');
+            if (codeParam) {
+                document.getElementById('main-tracking-input').value = codeParam;
+                runTrackingLookup();
+            }
+        });
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            
+            const icon = document.getElementById('theme-icon');
+            const iconMobile = document.getElementById('theme-icon-mobile');
+            if (isDark) {
+                if (icon) icon.className = "fa-solid fa-sun text-lg";
+                if (iconMobile) iconMobile.className = "fa-solid fa-sun";
+            } else {
+                if (icon) icon.className = "fa-solid fa-moon text-lg";
+                if (iconMobile) iconMobile.className = "fa-solid fa-moon";
+            }
+        }
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Chat Drawer Toggle
+        function toggleChatDrawer() {
+            const drawer = document.getElementById('chat-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        // Chat Message Sender
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const container = document.getElementById('chat-messages');
+            container.innerHTML += `<div class="bg-accent text-white p-3 rounded-2xl shadow-sm max-w-[85%] ml-auto">${msg}</div>`;
+            input.value = '';
+
+            setTimeout(() => {
+                container.innerHTML += `<div class="bg-cardBg p-3 rounded-2xl border border-cardBorder shadow-sm max-w-[85%]">Thank you! You can track any waybill number directly above or call our 24/7 hotline at +1 (800) 555-0199 for real-time human agent updates.</div>`;
+                container.scrollTop = container.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>
